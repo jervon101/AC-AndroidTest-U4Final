@@ -12,6 +12,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -28,19 +29,22 @@ public class MainActivity extends AppCompatActivity {
 
     ColorAdapter adapter;
     static HashMap<String, String> colorDict = new HashMap<>();
-    TextView textView;
+    LinearLayout layout;
     List<String> colorsList;
     RecyclerView recyclerView;
-    Button button;
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        colorsList = new ArrayList<>();
+
         setup();
-        textView = (TextView) findViewById(R.id.more_textView);
-        button = (Button) findViewById(R.id.button);
+
+        layout = (LinearLayout) findViewById(R.id.fragment_container);
 
         colorDict.put("indigo", "#4b0082");
         colorDict.put("green", "#00ff00");
@@ -48,26 +52,15 @@ public class MainActivity extends AppCompatActivity {
         colorDict.put("red", "#ff0000");
         // TODO: adding all the colors and their values would be tedious, instead fetch it from the url below
 
-        colorsList = new ArrayList<>();
         String[] names = new String[]{"blue", "red", "purple", "indigo", "orange", "brown", "black", "green"};
+
         for (String n : names) colorsList.add(n);
 
 
         recyclerView = findViewById(R.id.rv);
+
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        Sort sort = new Sort();
-
-        ArrayList<String> test = new ArrayList<>();
-
-        for (int i = 0; i < names.length; i++) {
-            test.add(names[i]);
-        }
-
-        sort.selectionSort(test,false);
-
-
-//        Log.e("Sort", )
 
 
     }
@@ -94,7 +87,6 @@ public class MainActivity extends AppCompatActivity {
                         colorsList.add(s);
                     }
                 }
-
 
                 String[] arr = new String[colorsList.size()];
 
@@ -127,9 +119,13 @@ public class MainActivity extends AppCompatActivity {
                     colorsList.add(arr[i]);
                 }
 
+               Log.e("THis List", colorsList.size()+""+ colorDict.size());
 
-                ColorAdapter adapter = new ColorAdapter(colorsList, colorDict);
+
+
+                adapter = new ColorAdapter(colorsList, colorDict);
                 recyclerView.setAdapter(adapter);
+
             }
 
 
@@ -153,25 +149,26 @@ public class MainActivity extends AppCompatActivity {
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.info:
-                InfoFragment ad = new InfoFragment();
-                FragmentManager manager = getSupportFragmentManager();
-                FragmentTransaction transaction = manager.beginTransaction();
-                transaction.replace(R.id.fragment_container, ad);
-                transaction.commit();
+                  if(layout.getVisibility()==View.GONE){
+                      layout.setVisibility(View.VISIBLE);
+
+                      InfoFragment ad = new InfoFragment();
+                      FragmentManager manager = getSupportFragmentManager();
+                      FragmentTransaction transaction = manager.beginTransaction();
+                      transaction.replace(R.id.fragment_container, ad);
+                      transaction.commit();
+                  } else if (layout.getVisibility() !=View.GONE){
+                      layout.setVisibility(View.GONE);
+                  }
+
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
-    public void help_me(View view) {
-
-        if(textView.getVisibility()==View.GONE){
-            textView.setVisibility(View.VISIBLE);
-            button.setText("Hide/Less");
-        } else if (textView.getVisibility()!=View.GONE){
-            textView.setVisibility(View.GONE);
-            button.setText("More");
-        }
-    }
+//    public void help_me(View view) {
+//
+//        }
+//    }
 }
